@@ -2,6 +2,7 @@
 
 ## Table of contents
 
+- [Introduction](#introduction)
 - [Basic usage](#basic_usage)
 - [Types](#types)
 - [Strings](#strings)
@@ -14,6 +15,9 @@
 - [Arrays](#arrays)
 - [Methods](#methods)
 
+## Introduction
+
+Validates schemas and datatypes in a simple way, strongly inspired by [Zod](https://github.com/colinhacks/zod)
 
 ## Basic usage
 
@@ -55,6 +59,8 @@ print_r($user_schema->safe_parse([
 ])); // output: ["success" => false, "message" => "email is not a valid email"]
 ```
 
+[Return to table of contents](#table-of-contents)
+
 ## Types
 
 ```php
@@ -65,6 +71,8 @@ ZSchema::bool()
 ZSchema::array()
 ZSchema::null()
 ```
+
+[Return to table of contents](#table-of-contents)
 
 ## Strings
 
@@ -110,6 +118,8 @@ Example
 ```php
 echo ZSchema::string->to_lower_case()->parse("Hello World!") // output: "hello world!"
 ```
+
+[Return to table of contents](#table-of-contents)
 
 ## Numbers
 
@@ -176,16 +186,38 @@ ZSchema::array([
 ])
 ```
 
+[Return to table of contents](#table-of-contents)
+
 ## Methods
 
 ### parse
 
+The parse method executes the validations specified in the method value, if the validation fails it will throw an exception with an error message
+
 ```php
-ZSchema::int()->parse("hola")
+ZSchema::int()->parse(5) // return 5
+ZSchema::int()->parse("hola") // throws Error
 ```
 
 ### safe_parse
 
+Unlike the parse method, when the validation fails it will not throw an error, instead it will return an array with the message and the status of the validation.
+
 ```php
-ZSchema::int()->safe_parse("hola")
+ZSchema::int()->safe_parse(5) // return ["success" => true, "value" => 5]
+ZSchema::int()->safe_parse("hola") // return ["success" => false, message => ..., "value" => "hola"]
 ```
+
+### get_validations()
+
+```php
+ZSchema::string()->email()->get_validations() // return ["email" => true]
+```
+
+### get_transforms()
+
+```php
+ZSchema::string()->to_lower_case()->get_transforms() // return ["to_lower_case" => true]
+```
+
+[Return to table of contents](#table-of-contents)
