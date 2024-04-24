@@ -27,13 +27,15 @@ class ZSchema {
         return new self("bool", $message);
     }
 
-    public static function array(array $array, $message = null): mixed {
-        if (!is_array($array)) throw new Exception("the argument must be an array");
+    public static function array($array = null, $message = null): mixed {
+        // if (!is_array($array)) throw new Exception("the argument must be an array");
 
-        if (count($array) == 0) throw new Exception("array cannot be empty");
+        // if (count($array) == 0) throw new Exception("array cannot be empty");
 
-        foreach($array as $key => $value) {
-            if (!($value instanceof Schema)) throw new Exception("$key is not a Schema");
+        if ($array != null && is_array($array) && count($array) > 0) {
+            foreach($array as $key => $value) {
+                if (!($value instanceof Schema)) throw new Exception("$key is not a Schema");
+            }
         }
 
         return new self("array", $message, $array);
@@ -196,14 +198,28 @@ class ZSchema {
                 case "starts_with":
                     if (!str_starts_with($value, $validation_value)) return [
                         "success" => false,
-                        "message" => $this->messages["starts_with"] ?? "$key does not start with $validation_value"
+                        "message" => $this->messages["starts_with"] ?? "$key should start with $validation_value"
+                    ];
+                    break;
+
+                case "not_starts_with":
+                    if (str_starts_with($value, $validation_value)) return [
+                        "success" => false,
+                        "message" => $this->messages["not_starts_with"] ?? "$key should not start with $validation_value"
                     ];
                     break;
 
                 case "ends_with":
                     if (!str_ends_with($value, $validation_value)) return [
                         "success" => false,
-                        "message" => $this->messages["ends_with"] ?? "$key does not end with $validation_value"
+                        "message" => $this->messages["ends_with"] ?? "$key should end with $validation_value"
+                    ];
+                    break;
+
+                case "not_ends_with":
+                    if (str_ends_with($value, $validation_value)) return [
+                        "success" => false,
+                        "message" => $this->messages["not_ends_with"] ?? "$key should not end with $validation_value"
                     ];
                     break;
 
@@ -437,9 +453,21 @@ class ZSchema {
         return $this;
     }
 
+    public function not_starts_with($value, $message = null): self {
+        $this->validations['not_starts_with'] = $value;
+        if ($message != null) $this->messages['not_starts_with'] = $message;
+        return $this;
+    }
+
     public function ends_with($value, $message = null): self {
         $this->validations['ends_with'] = $value;
         if ($message != null) $this->messages['ends_with'] = $message;
+        return $this;
+    }
+
+    public function not_ends_with($value, $message = null): self {
+        $this->validations['not_ends_with'] = $value;
+        if ($message != null) $this->messages['not_ends_with'] = $message;
         return $this;
     }
 
