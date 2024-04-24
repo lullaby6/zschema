@@ -245,7 +245,7 @@ $user_schema = ZSchema::array([
 ], "The user value is not valid");
 ```
 
-### Validations
+### Validations error messages
 
 for validations it is a bit more of the same, in validations where no argument is required to validate, the argument will be the error message, if the validation method has an argument, then it will be the second argument
 
