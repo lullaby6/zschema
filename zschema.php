@@ -53,7 +53,7 @@ class ZSchema {
                 throw new Exception($is_valid['message']);
 
             case "float":
-                $is_valid = $this->validate_int($value, $key);
+                $is_valid = $this->validate_float($value, $key);
                 if ($is_valid['success'] == true) return $value;
                 throw new Exception($is_valid['message']);
 
@@ -106,7 +106,7 @@ class ZSchema {
 
         if (!is_string($value)) return [
             "success" => false,
-            "message" => $this->message ?? "$key is not a string"
+            "message" => $this->message ?? "$key is not a valid string"
         ];
 
         foreach ($this->validations as $validation_name => $validation_value) {
@@ -271,13 +271,8 @@ class ZSchema {
         return $value;
     }
 
-    public function validate_int($value, $key = null): array {
+    public function validate_number($value, $key = null): array {
         if ($key == null) $key = $value;
-
-        if (!is_int($value)) return [
-            "success" => false,
-            "message" => $this->message ?? "$key is not an integer"
-        ];
 
         foreach ($this->validations as $validation_name => $validation_value) {
             switch ($validation_name) {
@@ -335,6 +330,28 @@ class ZSchema {
         return [
             "success" => true
         ];
+    }
+
+    public function validate_int($value, $key = null): array {
+        if ($key == null) $key = $value;
+
+        if (!is_int($value)) return [
+            "success" => false,
+            "message" => $this->message ?? "$key is not a valid int"
+        ];
+
+        return $this->validate_number($value, $key);
+    }
+
+    public function validate_float($value, $key = null): array {
+        if ($key == null) $key = $value;
+
+        if (!is_int($value)) return [
+            "success" => false,
+            "message" => $this->message ?? "$key is not a valid float"
+        ];
+
+        return $this->validate_number($value, $key);
     }
 
     public function transform_int(int $value): int {

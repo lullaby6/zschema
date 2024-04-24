@@ -14,6 +14,7 @@
     - [Transforms](#numbers-transforms)
 - [Arrays](#arrays)
 - [Methods](#methods)
+- [Messages](#messages)
 
 ## Introduction
 
@@ -218,6 +219,38 @@ ZSchema::string()->email()->get_validations() // return ["email" => true]
 
 ```php
 ZSchema::string()->to_lower_case()->get_transforms() // return ["to_lower_case" => true]
+```
+
+[Return to table of contents](#table-of-contents)
+
+## Messages
+
+### Type error message
+
+```php
+// by default
+ZSchema::int()->safe_parse("world") // return ["sucess" => false, "message" => "world is not a valid int", ...]
+
+// with custom type error message
+ZSchema::int("The value is not a number")->safe_parse("world") // return ["sucess" => false, "message" => "The value is not a number", ...]
+```
+
+but for arrays the second argument is the message
+
+```php
+$user_schema = ZSchema::array([
+    "first_name" => ZSchema::string()->min_length(3)->required(),
+    "last_name" => ZSchema::string()->min_length(3),
+    "email" => ZSchema::string()->email()->required(),
+], "The user value is not valid");
+```
+
+### Validations
+
+for validations it is a bit more of the same, in validations where no argument is required to validate, the argument will be the error message, if the validation method has an argument, then it will be the second argument
+
+```php
+ZSchema::string()->email("The e-mail is not valid")->max_length(100, "the e-mail must not contain more than 100 characters")
 ```
 
 [Return to table of contents](#table-of-contents)
