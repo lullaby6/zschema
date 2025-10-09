@@ -19,7 +19,7 @@
 ## Installation
 
 ```bash
-composer require lullaby6/zchema
+composer require lullaby6/zschema
 ```
 
 ## Introduction
@@ -33,7 +33,7 @@ Creating a simple integer schema
 ```php
 require __DIR__ . '/vendor/autoload.php';
 
-use Lullaby6\Zchema\ZSchema;
+use Lullaby6\ZSchema\ZSchema;
 
 // creating the integer schema
 $int_schema = ZSchema::int();
@@ -48,7 +48,7 @@ Creating a array schema
 ```php
 require __DIR__ . '/vendor/autoload.php';
 
-use Lullaby6\Zchema\ZSchema;
+use Lullaby6\ZSchema\ZSchema;
 
 // creating user schema
 $user_schema = ZSchema::array([

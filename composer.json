@@ -1,5 +1,5 @@
 {
-	"name": "lullaby6/zchema",
+	"name": "lullaby6/zschema",
 	"description": "Schema validations inspired by zod",
 	"type": "library",
 	"license": "MIT",
@@ -8,7 +8,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Lullaby6\\Zchema\\": "src/"
+			"Lullaby6\\ZSchema\\": "src/"
 		}
 	},
 	"authors": [
