@@ -1,6 +1,6 @@
 <?php
 
-namespace Lullaby6\Zchema;
+namespace Lullaby6\ZSchema;
 
 class ZSchema
 {
