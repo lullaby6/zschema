@@ -3,6 +3,7 @@
 ## Table of contents
 
 -   [Introduction](#introduction)
+-   [Installation](#installation)
 -   [Basic usage](#basic_usage)
 -   [Types](#types)
 -   [Strings](#strings)
@@ -16,15 +17,15 @@
 -   [Methods](#methods)
 -   [Messages](#messages)
 
+## Introduction
+
+Validates schemas and datatypes in a simple way, strongly inspired by [Zod](https://github.com/colinhacks/zod)
+
 ## Installation
 
 ```bash
 composer require lullaby6/zschema
 ```
-
-## Introduction
-
-Validates schemas and datatypes in a simple way, strongly inspired by [Zod](https://github.com/colinhacks/zod)
 
 ## Basic usage
 
