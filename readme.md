@@ -2,19 +2,25 @@
 
 ## Table of contents
 
-- [Introduction](#introduction)
-- [Basic usage](#basic_usage)
-- [Types](#types)
-- [Strings](#strings)
-    - [Validations](#strings-validations)
-    - [Transforms](#strings-transforms)
-- [Numbers](#numbers)
-    - [Types](#numbers-types)
-    - [Validations](#numbers-validations)
-    - [Transforms](#numbers-transforms)
-- [Arrays](#arrays)
-- [Methods](#methods)
-- [Messages](#messages)
+-   [Introduction](#introduction)
+-   [Basic usage](#basic_usage)
+-   [Types](#types)
+-   [Strings](#strings)
+    -   [Validations](#strings-validations)
+    -   [Transforms](#strings-transforms)
+-   [Numbers](#numbers)
+    -   [Types](#numbers-types)
+    -   [Validations](#numbers-validations)
+    -   [Transforms](#numbers-transforms)
+-   [Arrays](#arrays)
+-   [Methods](#methods)
+-   [Messages](#messages)
+
+## Installation
+
+```bash
+composer require lullaby6/zchema
+```
 
 ## Introduction
 
@@ -25,7 +31,9 @@ Validates schemas and datatypes in a simple way, strongly inspired by [Zod](http
 Creating a simple integer schema
 
 ```php
-include_once "./zschema.php";
+require __DIR__ . '/vendor/autoload.php';
+
+use Lullaby6\Zchema\ZSchema;
 
 // creating the integer schema
 $int_schema = ZSchema::int();
@@ -38,7 +46,9 @@ print_r($int_schema->safe_parse("hello")); // output: ["success" => false, "mess
 Creating a array schema
 
 ```php
-include_once "./zschema.php";
+require __DIR__ . '/vendor/autoload.php';
+
+use Lullaby6\Zchema\ZSchema;
 
 // creating user schema
 $user_schema = ZSchema::array([
@@ -250,7 +260,7 @@ $user_schema = ZSchema::array([
 for validations it is a bit more of the same, in validations where no argument is required to validate, the argument will be the error message, if the validation method has an argument, then it will be the second argument
 
 ```php
-ZSchema::string()->email("The e-mail is not valid")->max_length(100, "the e-mail must not contain more than 100 characters")
+ZSchema::string()->email("The e-mail is not valid")->max_length(100, "The e-mail must not contain more than 100 characters")
 ```
 
 [Return to table of contents](#table-of-contents)

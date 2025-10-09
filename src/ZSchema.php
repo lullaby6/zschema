@@ -1,98 +1,109 @@
 <?php
 
-class ZSchema {
+namespace Lullaby6\Zchema;
+
+class ZSchema
+{
     private array $validations = [];
     private array $transforms = [];
     private array $messages = [];
 
     function __construct(
         private string $type,
-        private mixed $message = null,
-        private mixed $array = null,
+        private mixed $message = "",
+        private mixed $array = [],
     ) {}
 
-    public static function int($message = null): self {
+    public static function int($message = null): self
+    {
         return new self("int", $message);
     }
 
-    public static function float($message = null): self {
+    public static function float($message = null): self
+    {
         return new self("float", $message);
     }
 
-    public static function string($message = null): self {
+    public static function string($message = null): self
+    {
         return new self("string", $message);
     }
 
-    public static function bool($message = null): self {
+    public static function bool($message = null): self
+    {
         return new self("bool", $message);
     }
 
-    public static function array($array = null, $message = null): mixed {
-        // if (!is_array($array)) throw new Exception("the argument must be an array");
+    public static function array($array = null, $message = null): mixed
+    {
+        // if (!is_array($array)) throw new \Exception("the argument must be an array");
 
-        // if (count($array) == 0) throw new Exception("array cannot be empty");
+        // if (count($array) == 0) throw new \Exception("array cannot be empty");
 
         if ($array != null && is_array($array) && count($array) > 0) {
-            foreach($array as $key => $value) {
-                if (!($value instanceof Schema)) throw new Exception("$key is not a Schema");
+            foreach ($array as $key => $value) {
+                if (!($value instanceof ZSchema)) throw new \Exception("$key is not a Schema");
             }
         }
 
         return new self("array", $message, $array);
     }
 
-    public static function null(): self {
+    public static function null(): self
+    {
         return new self("null");
     }
 
-    public function parse($value, $key = null) {
+    public function parse($value, $key = null)
+    {
         switch ($this->type) {
             case "int":
                 $is_valid = $this->validate_int($value, $key);
                 if ($is_valid['success'] == true) return $value;
-                throw new Exception($is_valid['message']);
+                throw new \Exception($is_valid['message']);
 
             case "float":
                 $is_valid = $this->validate_float($value, $key);
                 if ($is_valid['success'] == true) return $value;
-                throw new Exception($is_valid['message']);
+                throw new \Exception($is_valid['message']);
 
             case "string":
                 $is_valid = $this->validate_string($value, $key);
                 if ($is_valid['success'] == true) return $value;
-                throw new Exception($is_valid['message']);
+                throw new \Exception($is_valid['message']);
 
             case "bool":
-                if (!is_bool($value)) throw new Exception($this->message ?? "$value is not a boolean");
+                if (!is_bool($value)) throw new \Exception($this->message ?? "$value is not a boolean");
                 return $value;
 
             case "array":
-                if (!is_array($value)) throw new Exception($this->message ?? "$value is not an array");
+                if (!is_array($value)) throw new \Exception($this->message ?? "$value is not an array");
 
                 foreach ($this->array as $tKey => $tValue) {
-                    if (!($tValue instanceof Schema)) throw new Exception("$tKey is not a Schema");
+                    if (!($tValue instanceof ZSchema)) throw new \Exception("$tKey is not a Schema");
 
                     if (isset($value[$tKey])) $tValue->parse($value[$tKey], $tKey);
                     else if (isset($tValue->get_validations()['required'])) {
-                        throw new Exception($tValue->get_messages()["required"] ?? "$tKey is required");
+                        throw new \Exception($tValue->get_messages()["required"] ?? "$tKey is required");
                     }
                 }
 
                 return $value;
 
             case "null":
-                if (!is_null($value)) throw new Exception("$value is not null");
+                if (!is_null($value)) throw new \Exception("$value is not null");
                 return null;
         }
     }
 
-    public function safe_parse($value): array {
+    public function safe_parse($value): array
+    {
         try {
             return [
                 "success" => true,
                 "value" => $this->parse($value)
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 "success" => false,
                 "message" => $e->getMessage(),
@@ -101,7 +112,8 @@ class ZSchema {
         }
     }
 
-    private function validate_string($value, $key = null): array {
+    private function validate_string($value, $key = null): array
+    {
         if ($key == null) $key = $value;
 
         if (!is_string($value)) return [
@@ -251,7 +263,8 @@ class ZSchema {
         ];
     }
 
-    private function transform_string(string $value): string {
+    private function transform_string(string $value): string
+    {
         foreach ($this->transforms as $transform_name => $transform_value) {
             switch ($transform_name) {
                 case "trim":
@@ -271,7 +284,8 @@ class ZSchema {
         return $value;
     }
 
-    public function validate_number($value, $key = null): array {
+    public function validate_number($value, $key = null): array
+    {
         if ($key == null) $key = $value;
 
         foreach ($this->validations as $validation_name => $validation_value) {
@@ -332,7 +346,8 @@ class ZSchema {
         ];
     }
 
-    public function validate_int($value, $key = null): array {
+    public function validate_int($value, $key = null): array
+    {
         if ($key == null) $key = $value;
 
         if (!is_int($value)) return [
@@ -343,10 +358,11 @@ class ZSchema {
         return $this->validate_number($value, $key);
     }
 
-    public function validate_float($value, $key = null): array {
+    public function validate_float($value, $key = null): array
+    {
         if ($key == null) $key = $value;
 
-        if (!is_int($value)) return [
+        if (!is_float($value)) return [
             "success" => false,
             "message" => $this->message ?? "$key is not a valid float"
         ];
@@ -354,7 +370,8 @@ class ZSchema {
         return $this->validate_number($value, $key);
     }
 
-    public function transform_int(int $value): int {
+    public function transform_int(int $value): int
+    {
         foreach ($this->transforms as $transform_name => $transform_value) {
             switch ($transform_name) {
                 case "to_max":
@@ -369,55 +386,64 @@ class ZSchema {
         return $value;
     }
 
-    public function max($value, $message = null): self {
+    public function max($value, $message = null): self
+    {
         $this->validations['max'] = $value;
         if ($message != null) $this->messages['max'] = $message;
         return $this;
     }
 
-    public function min($value, $message = null): self {
+    public function min($value, $message = null): self
+    {
         $this->validations['min'] = $value;
         if ($message != null) $this->messages['min'] = $message;
         return $this;
     }
 
-    public function not_empty($message = null): self {
+    public function not_empty($message = null): self
+    {
         $this->validations['not_empty'] = true;
         if ($message != null) $this->messages['not_empty'] = $message;
         return $this;
     }
 
-    public function required($message = null): self {
+    public function required($message = null): self
+    {
         $this->validations['required'] = true;
         if ($message != null) $this->messages['required'] = $message;
         return $this;
     }
 
-    public function max_length($value, $message = null): self {
+    public function max_length($value, $message = null): self
+    {
         $this->validations['max_length'] = $value;
         if ($message != null) $this->messages['max_length'] = $message;
         return $this;
     }
 
-    public function min_length($value, $message = null): self {
+    public function min_length($value, $message = null): self
+    {
         $this->validations['min_length'] = $value;
         if ($message != null) $this->messages['min_length'] = $message;
         return $this;
     }
 
-    public function length($value, $message = null): self {
+    public function length($value, $message = null): self
+    {
         $this->validations['length'] = $value;
         if ($message != null) $this->messages['length'] = $message;
         return $this;
     }
 
-    public function email($message = null): self {
+    public function email($message = null): self
+    {
         $this->validations['email'] = true;
         if ($message != null) $this->messages['email'] = $message;
         return $this;
     }
 
-    public function url($message = null): self {
+    public function url($message = null): self
+    {
         $this->validations['url'] = true;
         if ($message != null) $this->messages['url'] = $message;
         return $this;
@@ -428,79 +454,92 @@ class ZSchema {
     //     return $this;
     // }
 
-    public function uuid($message): self {
+    public function uuid($message): self
+    {
         $this->validations['uuid'] = true;
         if ($message != null) $this->messages['uuid'] = $message;
         return $this;
     }
 
-    public function ipv4($message = null): self {
+    public function ipv4($message = null): self
+    {
         $this->validations['ipv4'] = true;
         if ($message != null) $this->messages['ipv4'] = $message;
         return $this;
     }
 
-    public function ipv6($message = null): self {
-        $this->validations['ipv4'] = true;
+    public function ipv6($message = null): self
+    {
+        $this->validations['ipv6'] = true;
         if ($message != null) $this->messages['ipv6'] = $message;
         return $this;
     }
 
-    public function regex($regex, $message = null): self {
+    public function regex($regex, $message = null): self
+    {
         $this->validations['regex'] = $regex;
         if ($message != null) $this->messages['regex'] = $message;
         return $this;
     }
 
-    public function includes($value, $message = null): self {
+    public function includes($value, $message = null): self
+    {
         $this->validations['includes'] = $value;
         if ($message != null) $this->messages['includes'] = $message;
         return $this;
     }
 
-    public function not_includes($value, $message = null): self {
+    public function not_includes($value, $message = null): self
+    {
         $this->validations['not_includes'] = $value;
         if ($message != null) $this->messages['not_includes'] = $message;
         return $this;
     }
 
-    public function starts_with($value, $message = null): self {
+    public function starts_with($value, $message = null): self
+    {
         $this->validations['starts_with'] = $value;
         if ($message != null) $this->messages['starts_with'] = $message;
         return $this;
     }
 
-    public function not_starts_with($value, $message = null): self {
+    public function not_starts_with($value, $message = null): self
+    {
         $this->validations['not_starts_with'] = $value;
         if ($message != null) $this->messages['not_starts_with'] = $message;
         return $this;
     }
 
-    public function ends_with($value, $message = null): self {
+    public function ends_with($value, $message = null): self
+    {
         $this->validations['ends_with'] = $value;
         if ($message != null) $this->messages['ends_with'] = $message;
         return $this;
     }
 
-    public function not_ends_with($value, $message = null): self {
+    public function not_ends_with($value, $message = null): self
+    {
         $this->validations['not_ends_with'] = $value;
         if ($message != null) $this->messages['not_ends_with'] = $message;
         return $this;
     }
 
-    public function date($message = null): self {
+    public function date($message = null): self
+    {
         $this->validations['date'] = true;
         if ($message != null) $this->messages['date'] = $message;
         return $this;
     }
 
-    public function time($message = null): self {
+    public function time($message = null): self
+    {
         $this->validations['time'] = true;
         if ($message != null) $this->messages['time'] = $message;
         return $this;
     }
 
-    public function datetime($message = null): self {
+    public function datetime($message = null): self
+    {
         $this->validations['datetime'] = true;
         if ($message != null) $this->messages['datetime'] = $message;
         return $this;
@@ -512,60 +551,71 @@ class ZSchema {
     //     return $this;
     // }
 
-    public function positive($message = null): self {
+    public function positive($message = null): self
+    {
         $this->validations['positive'] = true;
         if ($message != null) $this->messages['positive'] = $message;
         return $this;
     }
 
-    public function nonpositive($message = null): self {
+    public function nonpositive($message = null): self
+    {
         $this->validations['nonpositive'] = true;
         if ($message != null) $this->messages['nonpositive'] = $message;
         return $this;
     }
 
-    public function negative($message = null): self {
+    public function negative($message = null): self
+    {
         $this->validations['negative'] = true;
         if ($message != null) $this->messages['negative'] = $message;
         return $this;
     }
 
-    public function nonnegative($message = null): self {
+    public function nonnegative($message = null): self
+    {
         $this->validations['nonnegative'] = true;
         if ($message != null) $this->messages['nonnegative'] = $message;
         return $this;
     }
 
-    public function trim(): self {
+    public function trim(): self
+    {
         $this->transforms['trim'] = true;
         return $this;
     }
 
-    public function to_lower_case(): self {
+    public function to_lower_case(): self
+    {
         $this->transforms['to_lower_case'] = true;
         return $this;
     }
 
-    public function to_upper_case(): self {
+    public function to_upper_case(): self
+    {
         $this->transforms['to_upper_case'] = true;
         return $this;
     }
 
-    public function to_max($value): self {
+    public function to_max($value): self
+    {
         $this->transforms['to_max'] = $value;
         return $this;
     }
 
-    public function to_min($value): self {
+    public function to_min($value): self
+    {
         $this->transforms['to_min'] = $value;
         return $this;
     }
 
-    public function get_validations() {
+    public function get_validations()
+    {
         return $this->validations;
     }
 
-    public function get_messages() {
+    public function get_messages()
+    {
         return $this->messages;
     }
 }
