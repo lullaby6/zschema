@@ -210,7 +210,7 @@ Example:
 ```php
 use Lullaby6\ZSchema\ZSchema;
 
-// 1. Define the schema for a single item (e.g., a user)
+// 1. Define the schema for a single item
 $user_schema = ZSchema::array([
     "name" => ZSchema::string()->min_length(2),
     "role" => ZSchema::string()
