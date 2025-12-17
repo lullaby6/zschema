@@ -14,6 +14,7 @@
     -   [Validations](#numbers-validations)
     -   [Transforms](#numbers-transforms)
 -   [Arrays](#arrays)
+-   [Collections](#collections)
 -   [Methods](#methods)
 -   [Messages](#messages)
 
@@ -196,6 +197,42 @@ the value of the key can be any type of zschema
 ZSchema::array([
     "day" => ZSchema::int()
 ])
+```
+
+[Return to table of contents](#table-of-contents)
+
+## Collections
+
+`ZSchema::collection()` allows you to validate an array of items where each item must match a specific schema. It returns an instance of Illuminate\Support\Collection, enabling the use of Laravel's powerful collection methods immediately after validation.
+
+Example:
+
+```php
+use Lullaby6\ZSchema\ZSchema;
+
+// 1. Define the schema for a single item (e.g., a user)
+$user_schema = ZSchema::array([
+    "name" => ZSchema::string()->min_length(2),
+    "role" => ZSchema::string()
+]);
+
+// 2. Define the collection schema wrapper
+$users_list_schema = ZSchema::collection($user_schema);
+
+// 3. Raw input data
+$input = [
+    ["name" => "Admin", "role" => "admin"],
+    ["name" => "User",  "role" => "guest"],
+];
+
+// 4. Parse returns an Illuminate\Support\Collection
+$collection = $users_list_schema->parse($input);
+
+// Now you can use Laravel Collection methods!
+$admins = $collection->where('role', 'admin');
+
+print_r($admins->all());
+// output: [ 0 => ["name" => "Admin", "role" => "admin"] ]
 ```
 
 [Return to table of contents](#table-of-contents)

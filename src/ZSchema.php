@@ -49,6 +49,11 @@ class ZSchema
         return new self("array", $message, $array);
     }
 
+    public static function collection(ZSchema $schema, $message = null): self
+    {
+        return new self("collection", $message, $schema);
+    }
+
     public static function null(): self
     {
         return new self("null");
@@ -89,6 +94,20 @@ class ZSchema
                 }
 
                 return $value;
+
+            case "collection":
+                if (!is_array($value) && !($value instanceof \Illuminate\Support\Collection)) {
+                    throw new \Exception($this->message ?? "Value is not a valid collection/array");
+                }
+
+                $result = [];
+                $itemSchema = $this->array;
+
+                foreach ($value as $k => $item) {
+                    $result[] = $itemSchema->parse($item, $k);
+                }
+
+                return new \Illuminate\Support\Collection($result);
 
             case "null":
                 if (!is_null($value)) throw new \Exception("$value is not null");
