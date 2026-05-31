@@ -20,7 +20,7 @@
 
 ## Introduction
 
-Validates schemas and datatypes in a simple way, strongly inspired by [Zod](https://github.com/colinhacks/zod)
+A library to validate shema and data types inspired by [Zod](https://github.com/colinhacks/zod) from TypeScript.
 
 ## Installation
 
